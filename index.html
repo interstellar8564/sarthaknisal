@@ -369,7 +369,7 @@ footer{margin-top:40px;font-family:var(--mono);font-size:12.5px;color:var(--fain
     <div class="more">
       <div class="cols">
         <div class="notes">
-          <div><h4>Roles</h4><p>I designed the switched-capacitor tuning bank and its bias, modeled the spiral inductor in ASITIC, and extracted the performance data. Arvind Thamizhchelvan designed the cross-coupled core and varactor path and set up the PSS, harmonic-balance and phase-noise simulations.</p></div>
+          <div><h4>Roles</h4><p>I designed the switched-capacitor tuning bank and its bias, modeled the spiral inductor in ASITIC, and extracted the performance data. My teammate designed the cross-coupled core and varactor path and set up the PSS, harmonic-balance and phase-noise simulations.</p></div>
           <div><h4>What the data showed</h4>
             <ul>
               <li>The eight bands tune monotonically and overlap, so 6.71–7.30 GHz is covered without gaps.</li>
@@ -485,7 +485,7 @@ footer{margin-top:40px;font-family:var(--mono);font-size:12.5px;color:var(--fain
     <div class="more">
       <div class="cols">
         <div class="notes">
-          <div><h4>Roles</h4><p>I designed the bias network: a bootstrapped current reference and wide-swing mirrors for every cascode bias. Atharva Sankhe designed the second stage and handled stability. The folded-cascode core was joint work.</p></div>
+          <div><h4>Roles</h4><p>I designed the bias network: a bootstrapped current reference and wide-swing mirrors for every cascode bias. My teammate designed the second stage and handled stability. The folded-cascode core was joint work.</p></div>
           <div><h4>Trade-offs and lessons</h4>
             <ul>
               <li><b>Gain:</b> the resistive CMFB sense network loaded the first-stage output, the main reason gain landed below 89 dB.</li>
@@ -556,8 +556,8 @@ footer{margin-top:40px;font-family:var(--mono);font-size:12.5px;color:var(--fain
           <div><h4>Team results</h4>
             <ul>
               <li>93.7% simulated efficiency at full load including layout parasitics.</li>
-              <li>GaN junctions around 77 °C in Ansys Icepak with 25 W total heat (Piyush Rana).</li>
-              <li>18-element Q3D parasitic model reduced to 7 elements for common-mode analysis (Theo Nguyen); shield layer by Pranav Balaji.</li>
+              <li>GaN junctions around 77 °C in Ansys Icepak with 25 W total heat (teammate).</li>
+              <li>18-element Q3D parasitic model reduced to 7 elements for common-mode analysis, plus a shield layer for common-mode current (teammates).</li>
               <li>The CM estimate exceeded CISPR Class A from 200 kHz to 5 MHz; a CM choke and larger shield were the next steps.</li>
             </ul>
           </div>
@@ -665,7 +665,7 @@ footer{margin-top:40px;font-family:var(--mono);font-size:12.5px;color:var(--fain
     <div class="story"><div><h4>Problem</h4><p>During writes, unselected columns wrote floating bit-line values into the array, and a timing mismatch between wordline and address edges caused a glitch.</p></div><div><h4>What we did</h4><p>AND-gated each write wordline with the column-address bit so only the selected columns fire, and added two inverters of delay on one gate input.</p></div><div><h4>Result</h4><p>Correct write behavior at a 175 ps clock with an LVS/DRC-clean top level.</p></div></div>
     <div class="more">
       <div class="notes">
-        <p><b>Roles:</b> I designed the 3-to-8 read and write row decoders (schematic and layout) and shared LVS/DRC debugging and top-level integration with HongChan Lee and Ted Hsiao.</p>
+        <p><b>Roles:</b> I designed the 3-to-8 read and write row decoders (schematic and layout) and shared LVS/DRC debugging and top-level integration with my two teammates.</p>
         <p>Write-wordline splitting logic stops unselected columns from writing floating bit-line values, and two inverters of delay on one gate input removed a glitch between the wordline and address edges.</p>
       </div>
     </div>
