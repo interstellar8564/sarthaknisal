@@ -1,0 +1,827 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sarthak Nisal</title>
+<meta name="description" content="Sarthak Nisal: analog, RF and power-management circuit design. MS EE, NC State University, May 2027.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+:root{
+  --bg:#F3F4F1; --surface:#FFFFFF; --sunk:#ECEEEA; --ink:#15191C; --muted:#56606A; --faint:#89939A;
+  --rule:#DADFDA; --accent:#1B58B8; --accent-ink:#FFFFFF; --accent-soft:#E3ECF9; --copper:#94501F; --copper-soft:#F5E9DF;
+  --plate:#FFFFFF; --shadow:0 1px 2px rgba(20,30,40,.05),0 6px 24px rgba(20,30,40,.06);
+  --bar:rgba(243,244,241,.86);
+  --display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0E1215; --surface:#151B1F; --sunk:#11171A; --ink:#E4E9EB; --muted:#9BA6AD; --faint:#6E7980;
+    --rule:#26313A; --accent:#80ADF5; --accent-ink:#0E1215; --accent-soft:#17253A; --copper:#D69261; --copper-soft:#2A1F17;
+    --plate:#F2F3F0; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 28px rgba(0,0,0,.25);
+    --bar:rgba(14,18,21,.86);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0E1215; --surface:#151B1F; --sunk:#11171A; --ink:#E4E9EB; --muted:#9BA6AD; --faint:#6E7980;
+  --rule:#26313A; --accent:#80ADF5; --accent-ink:#0E1215; --accent-soft:#17253A; --copper:#D69261; --copper-soft:#2A1F17;
+  --plate:#F2F3F0; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 28px rgba(0,0,0,.25);
+  --bar:rgba(14,18,21,.86);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;padding-inline:20px;padding-block:0 56px}
+a{color:var(--accent);text-underline-offset:3px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+.wrap{max-width:1120px;margin-inline:auto}
+
+/* top bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;margin-inline:-20px;padding:0 20px;background:var(--bar);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--rule)}
+.bar .wrap{display:flex;align-items:center;gap:20px;height:56px}
+.bar .mark{font-family:var(--display);font-stretch:78%;font-weight:720;text-transform:uppercase;letter-spacing:.03em;font-size:17px;color:var(--ink);text-decoration:none;white-space:nowrap}
+.bar nav{margin-left:auto;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.bar nav::-webkit-scrollbar{display:none}
+.bar nav a{font-family:var(--mono);font-size:13px;color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:6px;white-space:nowrap}
+.bar nav a:hover{color:var(--ink);background:var(--sunk)}
+@media (max-width:640px){.bar .mark{display:none}.bar nav{margin-left:0}}
+
+/* hero */
+.hero{padding-top:56px;display:grid;gap:36px}
+.hero-top{display:grid;gap:32px;align-items:start}
+@media (min-width:900px){.hero-top{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:48px}}
+.hero h1{font-family:var(--display);font-stretch:70%;font-weight:760;font-size:clamp(56px,9vw,112px);line-height:.88;letter-spacing:-.01em;margin:0;text-transform:uppercase}
+.hero .role{font-family:var(--display);font-stretch:92%;font-weight:520;font-size:clamp(21px,2.5vw,27px);line-height:1.25;margin:18px 0 0;max-width:28ch;text-wrap:balance}
+.hero p.intro{margin:16px 0 0;max-width:60ch;color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px;align-items:center}
+.btn{font:inherit;font-family:var(--mono);font-size:13.5px;border-radius:8px;padding:9px 14px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--rule);background:var(--surface);color:var(--ink)}
+.btn:hover{border-color:var(--faint)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.primary:hover{filter:brightness(1.08)}
+.mail{font-family:var(--mono);font-size:13.5px;color:var(--muted);user-select:all}
+.glance{background:var(--surface);border:1px solid var(--rule);border-radius:12px;box-shadow:var(--shadow);padding:22px 22px 18px}
+.glance h2{margin:0 0 14px;font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.glance dl{margin:0;display:grid;gap:14px}
+.glance dl div{display:grid;grid-template-columns:96px 1fr;gap:12px;align-items:baseline}
+.glance dt{font-family:var(--mono);font-size:12px;color:var(--copper);letter-spacing:.03em;text-transform:uppercase}
+.glance dd{margin:0;font-size:15.5px;line-height:1.45}
+.glance dd span{display:block;color:var(--muted);font-size:14px}
+.open{margin-top:16px;padding-top:14px;border-top:1px solid var(--rule);font-size:14.5px;color:var(--muted);display:flex;gap:10px;align-items:flex-start}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:7px;flex:none;box-shadow:0 0 0 4px var(--accent-soft)}
+
+/* frequency ruler */
+.ruler{margin:0;background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:16px 16px 10px;overflow-x:auto}
+.ruler svg{display:block;width:100%;min-width:640px;height:auto}
+.ruler figcaption{font-family:var(--mono);font-size:12px;color:var(--faint);margin-top:6px}
+svg .ax{stroke:var(--ink);stroke-width:1.5}
+svg .tk{stroke:var(--ink);stroke-width:1}
+svg .ld{stroke:var(--faint);stroke-width:1;stroke-dasharray:2 3}
+svg .t-dec{fill:var(--muted);font-family:var(--mono);font-size:12px}
+svg .t-lab{fill:var(--ink);font-family:var(--mono);font-size:12.5px}
+svg .t-lab tspan.hz{fill:var(--accent)}
+svg .pt{fill:var(--accent)}
+svg .pt-ind{fill:var(--copper)}
+
+/* sections */
+section{padding-top:88px;scroll-margin-top:64px}
+.sh{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 14px;margin-bottom:10px}
+.sh h2{font-family:var(--display);font-stretch:74%;font-weight:720;text-transform:uppercase;font-size:clamp(30px,4.2vw,44px);line-height:1;margin:0}
+.sh .n{font-family:var(--mono);font-size:13px;color:var(--muted);margin-left:auto}
+.lede{max-width:64ch;color:var(--muted);margin:0 0 28px}
+
+/* overview tiles */
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.chip{font-family:var(--mono);font-size:13px;border:1px solid var(--rule);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 14px;cursor:pointer}
+.chip:hover{border-color:var(--faint)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tiles{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));margin-bottom:48px}
+.tile{display:grid;gap:8px;align-content:start;text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:16px 16px 14px;transition:border-color .15s,transform .15s,box-shadow .15s}
+.tile:hover{border-color:var(--accent);box-shadow:var(--shadow);transform:translateY(-2px)}
+@media (prefers-reduced-motion:reduce){.tile{transition:none}.tile:hover{transform:none}}
+.tile .tg{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.tile b{font-family:var(--display);font-stretch:90%;font-weight:650;font-size:18.5px;line-height:1.22}
+.tile .k{font-family:var(--mono);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* project cards */
+.projects{display:grid;gap:28px}
+.proj{background:var(--surface);border:1px solid var(--rule);border-radius:14px;box-shadow:var(--shadow);padding:clamp(20px,3vw,32px);display:grid;gap:24px;scroll-margin-top:72px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 16px}
+.eyebrow .dom{color:var(--accent);font-weight:500}
+.proj h3{font-family:var(--display);font-stretch:86%;font-weight:680;font-size:clamp(24px,3vw,31px);line-height:1.12;margin:8px 0 0;text-wrap:balance}
+.proj .sum{margin:10px 0 0;max-width:68ch}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:10px;overflow:hidden}
+.stats div{background:var(--sunk);padding:12px 14px;display:grid;gap:2px}
+.stats b{font-family:var(--mono);font-weight:500;font-size:19px;font-variant-numeric:tabular-nums;line-height:1.25}
+.stats span{font-size:13.5px;color:var(--muted);line-height:1.35}
+.cols{display:grid;gap:24px}
+@media (min-width:880px){.cols{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:36px}}
+.notes{display:grid;gap:16px;align-content:start}
+.notes h4{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--copper);margin:0 0 4px}
+.notes p{margin:0}
+.notes ul{margin:0;padding-left:1.1em;display:grid;gap:5px}
+
+/* spec table */
+.ds-wrap{overflow-x:auto;align-self:start}
+table.ds{width:100%;border-collapse:collapse;font-size:15px;font-variant-numeric:tabular-nums}
+.ds caption{caption-side:bottom;text-align:left;font-family:var(--mono);font-size:12px;color:var(--faint);padding-top:10px;line-height:1.55}
+.ds th,.ds td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--rule);vertical-align:top}
+.ds th:first-child,.ds td:first-child{padding-left:0}
+.ds thead th{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);border-bottom:1px solid var(--ink)}
+.ds td.v{font-family:var(--mono);font-size:14px;white-space:nowrap}
+.ds td.v.r{color:var(--ink);font-weight:500}
+.ds td.v.t{color:var(--muted)}
+
+/* figures */
+.figs{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))}
+.figs.one{grid-template-columns:minmax(0,560px)}
+.figs.single{grid-template-columns:minmax(0,760px)}
+figure{margin:0;display:grid;gap:8px;align-content:start}
+.zoom{all:unset;box-sizing:border-box;display:block;cursor:zoom-in;background:var(--plate);border:1px solid var(--rule);border-radius:8px;padding:8px;transition:border-color .15s}
+.zoom:hover{border-color:var(--accent)}
+.zoom:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.zoom img{display:block;width:100%;height:auto;border-radius:3px}
+figcaption{font-size:14px;color:var(--muted);line-height:1.45}
+figcaption b{color:var(--ink);font-weight:600}
+
+/* galleries + details */
+.proj > header{display:block}
+.mine{margin:0;background:var(--copper-soft);border-radius:10px;padding:10px 14px;font-size:15.5px;line-height:1.5}
+.mine b{font-family:var(--mono);font-size:11.5px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--copper);margin-right:10px}
+.gal{display:grid;gap:12px}
+.gl{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);display:flex;align-items:center;gap:12px;margin-top:4px}
+.gl::after{content:"";flex:1;height:1px;background:var(--rule)}
+.figs{grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr))}
+@media (min-width:760px){.figs.lead:not(.two) figure:first-child{grid-column:span 2}.figs.lead.two{grid-template-columns:1fr 1fr}}
+.zoom img{aspect-ratio:16/10;object-fit:contain;background:#fff}
+figcaption{font-size:13.5px}
+.more{border-top:1px solid var(--rule);padding-top:20px}
+.more .notes p + p{margin-top:8px}
+
+/* lightbox */
+.lb{position:fixed;inset:0;z-index:50;background:rgba(8,12,15,.82);display:grid;place-items:center;padding:calc(env(safe-area-inset-top,0px) + 24px) 16px calc(env(safe-area-inset-bottom,0px) + 24px)}
+.lb-in{max-width:min(1200px,100%);max-height:100%;display:grid;gap:10px}
+.lb img{background:#fff;border-radius:8px;padding:10px;max-width:100%;max-height:78vh;width:auto;height:auto;justify-self:center}
+.lb p{margin:0;color:#E8ECEE;font-size:15px;text-align:center}
+.lb button{justify-self:center;font-family:var(--mono);font-size:13px;background:transparent;color:#E8ECEE;border:1px solid rgba(255,255,255,.4);border-radius:8px;padding:7px 14px;cursor:pointer}
+
+/* in progress */
+.wip{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr))}
+.wip article{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:18px;display:grid;gap:8px;align-content:start}
+.wip h3{font-family:var(--display);font-stretch:88%;font-weight:650;font-size:20px;margin:0;line-height:1.2}
+.wip p{margin:0;font-size:15.5px;color:var(--muted)}
+.wip .eyebrow{font-size:11.5px}
+.wip .st{font-family:var(--mono);font-size:12px;color:var(--copper);display:flex;align-items:center;gap:8px}
+.wip .st::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--copper)}
+.wip .specs{font-family:var(--mono);font-size:12.5px;color:var(--ink);display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.wip .specs span{background:var(--sunk);border-radius:5px;padding:2px 7px}
+
+/* experience */
+.job{display:grid;gap:8px;margin-bottom:24px}
+.job h3{font-family:var(--display);font-stretch:86%;font-weight:680;font-size:clamp(24px,3vw,31px);margin:0;line-height:1.1}
+.xp{display:grid;gap:18px}
+.xp-item{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:clamp(20px,3vw,28px);display:grid;gap:14px}
+.xp-item h4{font-family:var(--display);font-stretch:90%;font-weight:650;font-size:22px;margin:0;line-height:1.2}
+.xp-item p{margin:0;max-width:70ch}
+.flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;font-size:14.5px}
+.flow .st{background:var(--sunk);border:1px solid var(--rule);border-radius:8px;padding:9px 12px;display:grid;gap:2px;flex:1 1 150px}
+.flow .st b{font-weight:600}
+.flow .st span{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.flow .st.me{border-color:var(--copper);background:var(--copper-soft)}
+.flow .ar{align-self:center;color:var(--faint);font-family:var(--mono)}
+.formula{background:var(--sunk);border-radius:10px;padding:14px 16px;display:grid;gap:10px}
+.formula dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-family:var(--mono);font-size:14px;align-items:baseline}
+.formula dt{color:var(--copper);font-weight:500}
+.formula dd{margin:0;overflow-wrap:anywhere}
+.formula p{margin:0;font-size:14px;color:var(--muted)}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tags span{font-family:var(--mono);font-size:12px;border:1px solid var(--rule);border-radius:5px;padding:3px 8px;color:var(--muted);background:var(--sunk)}
+.tags span.hl{color:var(--accent);border-color:var(--accent);background:var(--accent-soft)}
+
+/* skills + edu */
+.two{display:grid;gap:18px}
+@media (min-width:800px){.two{grid-template-columns:1fr 1fr}}
+.panel{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:22px 24px;display:grid;gap:16px;align-content:start}
+.kv div{display:grid;gap:3px}
+.kv h4,.edu h4.l{margin:0;font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--copper)}
+.kv p{margin:0}
+.edu div{display:grid;gap:2px}
+.edu h4{margin:0;font-family:var(--display);font-stretch:90%;font-weight:650;font-size:20px;line-height:1.2}
+.edu .m{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.edu p{margin:6px 0 0;font-size:15.5px}
+.cert{display:flex;gap:14px;align-items:center;border-top:1px solid var(--rule);padding-top:16px}
+.cert .seal{width:40px;height:40px;border-radius:50%;border:2px solid var(--accent);display:grid;place-items:center;font-family:var(--mono);font-size:11px;color:var(--accent);flex:none;font-weight:500}
+.cert b{display:block;font-weight:600}
+.cert span{font-size:14px;color:var(--muted)}
+
+/* contact */
+.contact-card{background:var(--ink);color:var(--bg);border-radius:16px;padding:clamp(24px,4vw,40px);display:grid;gap:18px}
+.contact-card h2{font-family:var(--display);font-stretch:74%;font-weight:720;text-transform:uppercase;font-size:clamp(30px,4.2vw,44px);line-height:1;margin:0}
+.contact-card p{margin:0;max-width:56ch;opacity:.8}
+.contact-card .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.contact-card .mail{color:var(--bg);opacity:.85}
+.contact-card .btn{background:transparent;color:var(--bg);border-color:color-mix(in srgb,var(--bg) 40%,transparent)}
+.contact-card .btn.primary{background:var(--bg);color:var(--ink);border-color:var(--bg)}
+footer{margin-top:40px;font-family:var(--mono);font-size:12.5px;color:var(--faint);display:flex;flex-wrap:wrap;gap:6px 24px}
+</style>
+<style>:root{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+
+
+<header class="bar">
+  <div class="wrap">
+    <a class="mark" href="#top">Sarthak Nisal</a>
+    <nav aria-label="Sections">
+      <a href="#projects">Projects</a><a href="#in-progress">In progress</a><a href="#industry">Industry</a><a href="#skills">Skills</a><a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap" id="top">
+<main>
+
+<div class="hero">
+  <div class="hero-top">
+    <div>
+      <h1>Sarthak<br>Nisal</h1>
+      <p class="role">Analog, RF and power-management circuit design</p>
+      <p class="intro">MS Electrical Engineering at NC State University, graduating May 2027. Before graduate school I worked at Elansol Technologies in India, first as an intern and then for two years as an application engineer, designing sensor electronics and commissioning monitoring systems on factory floors. At NC State I have designed circuits from a 50&nbsp;kHz flyback converter up to 30&nbsp;GHz microstrip couplers.</p>
+      <div class="actions">
+        <a class="btn primary" href="#projects">See projects</a>
+        <a class="btn" href="https://www.linkedin.com/in/sarthak-nisal" target="_blank" rel="noopener">LinkedIn ↗</a>
+        <button class="btn" type="button" data-copy="sarthaknisal007@gmail.com">Copy email</button>
+        <span class="mail">sarthaknisal007@gmail.com</span>
+      </div>
+    </div>
+    <aside class="glance" aria-label="At a glance">
+      <h2>At a glance</h2>
+      <dl>
+        <div><dt>Education</dt><dd>MS EE, NC State University<span>Aug 2025 – May 2027 · GPA 3.5</span></dd></div>
+        <div><dt>Industry</dt><dd>Elansol Technologies, Pune<span>Intern 2022–23 · Application Engineer Jul 2023 – Jul 2025</span></dd></div>
+        <div><dt>Focus</dt><dd>RF front-ends, analog/mixed-signal, power management ICs</dd></div>
+        <div><dt>Certified</dt><dd>Ignition 8.1, Inductive Automation<span>March 2024</span></dd></div>
+      </dl>
+      <div class="open"><span class="dot"></span><span>Open to full-time roles from 2027 and co-ops in analog/mixed-signal, RF, power IC design and applications engineering. Based in Raleigh, NC.</span></div>
+    </aside>
+  </div>
+
+  <figure class="ruler" aria-label="Operating frequencies of the projects on this page, on a log scale from 10 kHz to 100 GHz">
+    <svg viewBox="0 0 1000 170" role="img">
+      <title>Project operating frequencies, 10 kHz to 100 GHz</title>
+      <line class="ax" x1="40" y1="95" x2="960" y2="95"/>
+      <g>
+        <line class="tk" x1="40" y1="89" x2="40" y2="101"/><text class="t-dec" x="40" y="118" text-anchor="middle">10 kHz</text>
+        <line class="tk" x1="171.4" y1="89" x2="171.4" y2="101"/><text class="t-dec" x="171.4" y="118" text-anchor="middle">100 kHz</text>
+        <line class="tk" x1="302.9" y1="89" x2="302.9" y2="101"/><text class="t-dec" x="302.9" y="118" text-anchor="middle">1 MHz</text>
+        <line class="tk" x1="434.3" y1="89" x2="434.3" y2="101"/><text class="t-dec" x="434.3" y="118" text-anchor="middle">10 MHz</text>
+        <line class="tk" x1="565.7" y1="89" x2="565.7" y2="101"/><text class="t-dec" x="565.7" y="118" text-anchor="middle">100 MHz</text>
+        <line class="tk" x1="697.1" y1="89" x2="697.1" y2="101"/><text class="t-dec" x="697.1" y="118" text-anchor="middle">1 GHz</text>
+        <line class="tk" x1="828.6" y1="89" x2="828.6" y2="101"/><text class="t-dec" x="828.6" y="118" text-anchor="middle">10 GHz</text>
+        <line class="tk" x1="960" y1="89" x2="960" y2="101"/><text class="t-dec" x="960" y="118" text-anchor="middle">100 GHz</text>
+      </g>
+      <line class="ld" x1="50.4" y1="36" x2="50.4" y2="95"/><circle class="pt-ind" cx="50.4" cy="95" r="5"/>
+      <text class="t-lab" x="44" y="30">Laser vibration sensing · <tspan class="hz">12 kHz sampling</tspan></text>
+      <line class="ld" x1="131.9" y1="95" x2="131.9" y2="140"/><circle class="pt" cx="131.9" cy="95" r="5"/>
+      <text class="t-lab" x="131.9" y="156" text-anchor="middle">SIMO flyback · <tspan class="hz">50 kHz</tspan></text>
+      <line class="ld" x1="211" y1="64" x2="211" y2="95"/><circle class="pt" cx="211" cy="95" r="5"/>
+      <text class="t-lab" x="205" y="58">GaN interleaved buck · <tspan class="hz">200 kHz</tspan></text>
+      <line class="ld" x1="628.6" y1="36" x2="628.6" y2="95"/><circle class="pt" cx="628.6" cy="95" r="5"/>
+      <text class="t-lab" x="628.6" y="30" text-anchor="middle">Op-amp GBW · <tspan class="hz">301 MHz</tspan></text>
+      <line class="ld" x1="807.7" y1="64" x2="807.7" y2="89"/><rect class="pt" x="805.3" y="89" width="4.8" height="12" rx="1"/>
+      <text class="t-lab" x="815" y="58" text-anchor="end">LC VCO · <tspan class="hz">6.71–7.30 GHz</tspan></text>
+      <line class="ld" x1="891.3" y1="36" x2="891.3" y2="95"/><circle class="pt" cx="891.3" cy="95" r="5"/>
+      <text class="t-lab" x="960" y="30" text-anchor="end">Wilkinson / hybrid · <tspan class="hz">30 GHz</tspan></text>
+    </svg>
+    <figcaption>Where each project sits in frequency (log scale). Blue: NC State designs. Copper: industry work.</figcaption>
+  </figure>
+</div>
+
+<!-- ===================== PROJECTS ===================== -->
+<section id="projects">
+  <div class="sh"><h2>Circuit projects</h2><span class="n">NC State · 2025–2026</span></div>
+  <p class="lede">Six designs across RF, analog, power and digital. Each card shows the circuit and the key results; click any figure to enlarge it.</p>
+
+  <div class="filters" role="group" aria-label="Filter projects by domain">
+    <button class="chip" type="button" data-f="all" aria-pressed="true">All</button>
+    <button class="chip" type="button" data-f="rf" aria-pressed="false">RF</button>
+    <button class="chip" type="button" data-f="analog" aria-pressed="false">Analog</button>
+    <button class="chip" type="button" data-f="power" aria-pressed="false">Power</button>
+    <button class="chip" type="button" data-f="digital" aria-pressed="false">Digital</button>
+  </div>
+
+  <div class="tiles">
+    <a class="tile" href="#vco" data-d="rf"><span class="tg">RF</span><b>6.7–7.3 GHz LC VCO</b><span class="k">−111 dBc/Hz @ 1 MHz · 13.5 mW</span></a>
+    <a class="tile" href="#mmwave" data-d="rf"><span class="tg">RF · mm-wave</span><b>30 GHz Wilkinson &amp; hybrid</b><span class="k">−55.5 dB isolation · 90° split</span></a>
+    <a class="tile" href="#ota" data-d="analog"><span class="tg">Analog</span><b>Folded-cascode op-amp</b><span class="k">301 MHz GBW · 1.71 mW</span></a>
+    <a class="tile" href="#buck" data-d="power"><span class="tg">Power</span><b>480 W GaN interleaved buck</b><span class="k">48 → 12 V · 3.26 ns edges</span></a>
+    <a class="tile" href="#simo" data-d="power"><span class="tg">Power</span><b>550 W three-output flyback</b><span class="k">≈93.8% est. · 50 kHz</span></a>
+    <a class="tile" href="#sram" data-d="digital"><span class="tg">Digital</span><b>32-bit dual-port 8T SRAM</b><span class="k">175 ps · 26.84 µm²</span></a>
+  </div>
+
+  <div class="projects">
+
+  <!-- VCO -->
+  <article class="proj" data-d="rf" id="vco">
+    <header>
+      <div class="eyebrow"><span class="dom">RF</span><span>ECE 712 · ICs for Wireless</span><span>Spring 2026</span><span>2-person team</span></div>
+      <h3>6.7–7.3 GHz fully differential LC VCO in 45 nm CMOS</h3>
+      <p class="sum">Cross-coupled NMOS core with a 3-bit capacitor bank for coarse bands and MOS varactors for fine tuning.</p>
+    </header>
+    <div class="stats">
+      <div><b>6.71–7.30 GHz</b><span>tuning range, 8 bands</span></div>
+      <div><b>−111 dBc/Hz</b><span>@ 1 MHz, worst band</span></div>
+      <div><b>13.5 mW</b><span>power</span></div>
+      <div><b>160–190 MHz/V</b><span>peak |K<sub>VCO</sub>|</span></div>
+    </div>
+    <div class="gal">
+      <div class="gl">Circuit</div>
+      <div class="figs lead two">
+        <figure><button class="zoom" type="button"><img src="img/vco-topology.svg" alt="LC VCO topology: cross-coupled NMOS pair, center-tapped inductors, varactor pair, switched-capacitor bank and tail current source"></button><figcaption><b>VCO core.</b> Cross-coupled pair, LC tank, varactors, cap bank.</figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/vco-bank.svg" alt="Three binary-weighted switched-capacitor cells between the tank nodes"></button><figcaption><b>Capacitor bank.</b> Binary-weighted 1×/2×/4× cells.</figcaption></figure>
+      </div>
+      <div class="gl">Results</div>
+      <div class="figs">
+        <figure><button class="zoom" type="button"><img src="img/vco-tuning.webp" alt="Oscillation frequency versus varactor control voltage for eight capacitor-bank settings"></button><figcaption><b>Tuning curves,</b> all 8 bank codes.</figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/vco-phase-noise.webp" alt="Phase noise versus offset frequency"></button><figcaption><b>Phase noise</b> vs. offset.</figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/vco-startup.webp" alt="Differential output start-up transient settling within a few nanoseconds"></button><figcaption><b>Start-up,</b> steady state in ~5–6 ns.</figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/vco-kvco.webp" alt="VCO gain versus control voltage for each band"></button><figcaption><b>K<sub>VCO</sub></b> peaks mid-range.</figcaption></figure>
+      </div>
+    </div>
+    <div class="more">
+      <div class="cols">
+        <div class="notes">
+          <div><h4>Roles</h4><p>I designed the switched-capacitor tuning bank and its bias, modeled the spiral inductor in ASITIC, and extracted the performance data. Arvind Thamizhchelvan designed the cross-coupled core and varactor path and set up the PSS, harmonic-balance and phase-noise simulations.</p></div>
+          <div><h4>What the data showed</h4>
+            <ul>
+              <li>The eight bands tune monotonically and overlap, so 6.71–7.30 GHz is covered without gaps.</li>
+              <li>About 80% of the phase noise comes from the cross-coupled pair and about 10% from the tail source.</li>
+              <li>The ASITIC model brought the tank's real series resistance and Q into the phase-noise result.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="ds-wrap">
+          <table class="ds">
+            <thead><tr><th>Parameter</th><th>Target</th><th>Simulated</th></tr></thead>
+            <tbody>
+              <tr><td>Tuning range</td><td class="v t">6.7–7.3 GHz</td><td class="v r">6.71–7.30 GHz</td></tr>
+              <tr><td>Phase noise @ 1 MHz</td><td class="v t">&lt; −110 dBc/Hz</td><td class="v r">−111 to −113 dBc/Hz</td></tr>
+              <tr><td>|K<sub>VCO</sub>| (peak)</td><td class="v t">&lt; 500 MHz/V</td><td class="v r">160–190 MHz/V</td></tr>
+              <tr><td>Power</td><td class="v t">&lt; 20 mW</td><td class="v r">13.5 mW</td></tr>
+              <tr><td>Output swing</td><td class="v t">&gt; 1 V<sub>ppd</sub></td><td class="v r">3.3 V<sub>ppd</sub></td></tr>
+            </tbody>
+            <caption>45 nm CMOS · Cadence Spectre/SpectreRF (PSS, pnoise, HB) · ASITIC-extracted spiral inductor</caption>
+          </table>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ECE 549 -->
+  <article class="proj" data-d="rf" id="mmwave">
+    <header>
+      <div class="eyebrow"><span class="dom">RF · mm-wave</span><span>ECE 549 · RF Design for Wireless</span><span>Fall 2025</span><span>Individual</span></div>
+      <h3>30 GHz power dividers and branch-line hybrid coupler</h3>
+      <p class="sum">T-junction, Wilkinson and 90° branch-line designs at 30 GHz on an ε<sub>r</sub> = 2.1 substrate, built from λ/4 = 1.73 mm lines and simulated from 20 to 40 GHz in Keysight ADS.</p>
+    </header>
+    <div class="stats">
+      <div><b>−55.5 dB</b><span>Wilkinson output isolation</span></div>
+      <div><b>−3.03 dB</b><span>Wilkinson split, S21/S31</span></div>
+      <div><b>−45.8 dB</b><span>hybrid isolation @ 30 GHz</span></div>
+      <div><b>90°</b><span>hybrid quadrature phase</span></div>
+    </div>
+    <div class="gal">
+      <div class="gl">Circuit</div>
+      <div class="figs">
+        <figure><button class="zoom" type="button"><img src="img/rf-wilkinson.svg" alt="Wilkinson divider: two quarter-wave root-two Z0 lines with a 2 Z0 isolation resistor between outputs"></button><figcaption><b>Wilkinson.</b> √2·Z<sub>0</sub> λ/4 arms, 2·Z<sub>0</sub> isolation resistor.</figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/rf-hybrid.svg" alt="Branch-line coupler: square of four quarter-wave lines, Z0 and Z0 over root two"></button><figcaption><b>Branch-line hybrid.</b> Z<sub>0</sub> and Z<sub>0</sub>/√2 arms.</figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/rf-tjunction.svg" alt="T-junction divider with quarter-wave input line and two root-two Z0 arms"></button><figcaption><b>T-junction</b> baseline.</figcaption></figure>
+      </div>
+      <div class="gl">Results</div>
+      <div class="figs">
+        <figure><button class="zoom" type="button"><img src="img/rf-wilkinson-iso.webp" alt="Wilkinson S23 isolation with a deep null of -55.5 dB near 30 GHz"></button><figcaption><b>Wilkinson isolation:</b> −55.5 dB.</figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/rf-tjunction-iso.webp" alt="T-junction S23 isolation of about -6 dB across the band"></button><figcaption><b>T-junction isolation:</b> only ~6 dB.</figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/rf-hybrid-split.webp" alt="Branch-line coupler S21 and S31 crossing at -3 dB at 30 GHz"></button><figcaption><b>Hybrid split:</b> −3 dB each at 30 GHz.</figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/rf-hybrid-phase.webp" alt="Phase difference between S21 and S31 of 90 degrees, wrapping to -270 degrees above 30 GHz"></button><figcaption><b>Output phase:</b> 90° apart (wraps at 30 GHz).</figcaption></figure>
+      </div>
+    </div>
+    <div class="more">
+      <div class="cols">
+        <div class="notes">
+          <div><h4>What the comparison showed</h4>
+            <ul>
+              <li>The T-junction splits power but its outputs see each other directly: S23 ≈ −6 dB and an unmatched output port (S33 ≈ −6 dB).</li>
+              <li>Adding the 100 Ω resistor between the Wilkinson arms absorbs the odd-mode signal, which takes output isolation from ~6 dB to 55 dB and matches every port.</li>
+              <li>The branch-line hybrid gives an equal split with the outputs 90° apart, the building block for balanced amplifiers and I/Q mixers.</li>
+            </ul>
+          </div>
+          <div><h4>Wideband extension</h4><p>I also tried a two-section stepped-impedance Wilkinson for 24–36 GHz. It held the split to −3.26 to −3.36 dB across the band, but with a single isolation resistor the isolation was only about 4 dB at 30 GHz. A multi-section Wilkinson needs a resistor at every section, which is the fix for the next revision.</p></div>
+        </div>
+        <div class="ds-wrap">
+          <table class="ds">
+            <thead><tr><th>@ 30 GHz</th><th>T-junction</th><th>Wilkinson</th><th>Hybrid</th></tr></thead>
+            <tbody>
+              <tr><td>Split S21 / S31</td><td class="v r">−3.04 dB</td><td class="v r">−3.03 dB</td><td class="v r">≈ −3 dB</td></tr>
+              <tr><td>Input match S11</td><td class="v r">−59.8 dB</td><td class="v r">−56.5 dB</td><td class="v t">—</td></tr>
+              <tr><td>Output match S33</td><td class="v r">−6.0 dB</td><td class="v r">−59.0 dB</td><td class="v t">—</td></tr>
+              <tr><td>Isolation S23</td><td class="v r">−6.0 dB</td><td class="v r">−55.5 dB</td><td class="v r">−45.8 dB</td></tr>
+              <tr><td>Output phase</td><td class="v t">in phase</td><td class="v t">in phase</td><td class="v r">90°</td></tr>
+            </tbody>
+            <caption>Keysight ADS S-parameter simulation, 20–40 GHz in 0.1 GHz steps · TLINP transmission-line models with loss (A = 10–15 dB/m, tan δ = 0.002), not an EM-simulated layout</caption>
+          </table>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- OTA -->
+  <article class="proj" data-d="analog" id="ota">
+    <header>
+      <div class="eyebrow"><span class="dom">Analog</span><span>ECE 511 · Analog Electronics</span><span>Fall 2025</span><span>2-person team</span></div>
+      <h3>Fully differential folded-cascode op-amp, 1.5 V supply</h3>
+      <p class="sum">PMOS-input folded cascode, common-source second stage, CMFB and Miller compensation with a nulling resistor.</p>
+    </header>
+    <div class="stats">
+      <div><b>301 MHz</b><span>gain-bandwidth</span></div>
+      <div><b>79.2°</b><span>phase margin</span></div>
+      <div><b>8.58 nV/√Hz</b><span>input-referred noise</span></div>
+      <div><b>1.71 mW</b><span>power at 1.5 V</span></div>
+    </div>
+    <div class="gal">
+      <div class="gl">Circuit</div>
+      <div class="figs single">
+        <figure><button class="zoom" type="button"><img src="img/ota-topology.svg" alt="Folded-cascode op-amp with PMOS input pair, cascode branches, common-source second stage and RZ-CC compensation"></button><figcaption><b>Amplifier core.</b> Folded cascode + CS second stage with R<sub>Z</sub>–C<sub>C</sub> compensation (CMFB and bias not shown).</figcaption></figure>
+      </div>
+      <div class="gl">Results</div>
+      <div class="figs">
+        <figure><button class="zoom" type="button"><img src="img/ota-bode.webp" alt="Open-loop gain and phase versus frequency"></button><figcaption><b>Gain and phase.</b> 80.5 dB, 301 MHz, 79.2°.</figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/ota-noise.webp" alt="Input-referred noise density versus frequency"></button><figcaption><b>Input noise,</b> 8.58 nV/√Hz.</figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/ota-psrr.webp" alt="Power supply rejection versus frequency"></button><figcaption><b>PSRR+,</b> 114.5 dB at low frequency.</figcaption></figure>
+      </div>
+    </div>
+    <div class="more">
+      <div class="cols">
+        <div class="notes">
+          <div><h4>Roles</h4><p>I designed the bias network: a bootstrapped current reference and wide-swing mirrors for every cascode bias. Atharva Sankhe designed the second stage and handled stability. The folded-cascode core was joint work.</p></div>
+          <div><h4>Trade-offs and lessons</h4>
+            <ul>
+              <li><b>Gain:</b> the resistive CMFB sense network loaded the first-stage output, the main reason gain landed below 89 dB.</li>
+              <li><b>Swing:</b> the simple bias left little headroom across the folded devices.</li>
+              <li><b>Slew and settling:</b> pushing GBW to 301 MHz and PM to 79° needed a compensation cap the available current could not slew quickly.</li>
+              <li><b>Next time:</b> a higher-headroom bias, a cascoded or gain-boosted second stage, and GBW/PM set just above spec.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="ds-wrap">
+          <table class="ds">
+            <thead><tr><th>Parameter</th><th>Target</th><th>Simulated</th></tr></thead>
+            <tbody>
+              <tr><td>DC gain</td><td class="v t">89 dB</td><td class="v r">80.5 dB</td></tr>
+              <tr><td>GBW</td><td class="v t">&gt; 120 MHz</td><td class="v r">301 MHz</td></tr>
+              <tr><td>Phase margin</td><td class="v t">78°</td><td class="v r">79.2°</td></tr>
+              <tr><td>CMRR</td><td class="v t">&gt; 80 dB</td><td class="v r">80.7 dB</td></tr>
+              <tr><td>PSRR+</td><td class="v t">&gt; 120 dB</td><td class="v r">114.5 dB</td></tr>
+              <tr><td>Input noise</td><td class="v t">&lt; 14 nV/√Hz</td><td class="v r">8.58 nV/√Hz</td></tr>
+              <tr><td>Power</td><td class="v t">&lt; 7 mW</td><td class="v r">1.71 mW</td></tr>
+              <tr><td>Slew rate</td><td class="v t">&gt; 18 V/µs</td><td class="v r">0.5 V/µs</td></tr>
+              <tr><td>Settling to 1%</td><td class="v t">&lt; 90 ns</td><td class="v r">2.18 µs</td></tr>
+            </tbody>
+            <caption>1.5 V supply · gm/I<sub>D</sub> sizing in Cadence Virtuoso · Monte Carlo on gain, GBW and PM</caption>
+          </table>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- BUCK -->
+  <article class="proj" data-d="power" id="buck">
+    <header>
+      <div class="eyebrow"><span class="dom">Power</span><span>ECE 533 · Power Electronics Design &amp; Packaging</span><span>Spring 2026</span><span>4-person team · Grade A+</span></div>
+      <h3>480 W, 48 V to 12 V two-phase interleaved GaN buck module</h3>
+      <p class="sum">EPC2218A GaN FETs, UCC27611 drivers and isolated high-side drive at 200 kHz per phase, packaged as a 70 × 70 × 8.4 mm module.</p>
+    </header>
+    <div class="stats">
+      <div><b>480 W</b><span>48 V → 12 V, 2 phases</span></div>
+      <div><b>3.26 ns</b><span>switch-node rise</span></div>
+      <div><b>14.7 V/ns</b><span>rise dv/dt</span></div>
+      <div><b>93.7%</b><span>sim. efficiency with parasitics</span></div>
+    </div>
+    <div class="gal">
+      <div class="gl">Circuit and module</div>
+      <div class="figs lead two">
+        <figure><button class="zoom" type="button"><img src="img/buck-topology.svg" alt="Two-phase interleaved synchronous buck with four GaN FETs, isolated high-side drivers and coupled inductor"></button><figcaption><b>Power stage.</b> Two phases 180° apart, isolated high-side drive.</figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/buck-module.webp" alt="3D model of the power module showing copper busbars, GaN FETs, coupled inductor and capacitors"></button><figcaption><b>Module stack-up (team).</b></figcaption></figure>
+      </div>
+      <div class="gl">My results</div>
+      <div class="figs">
+        <figure><button class="zoom" type="button"><img src="img/buck-gate-drive.webp" alt="Low-side and high-side gate-to-source voltage for phase 1"></button><figcaption><b>Gate drive,</b> phase 1 with dead time.</figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/buck-sw-rise.webp" alt="Switching node rising edge"></button><figcaption><b>Rise:</b> 3.26 ns (10–90%).</figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/buck-sw-fall.webp" alt="Switching node falling edge"></button><figcaption><b>Fall:</b> 5.65 ns (90–10%).</figcaption></figure>
+      </div>
+      <div class="gl">Team analysis</div>
+      <div class="figs lead two">
+        <figure><button class="zoom" type="button"><img src="img/buck-thermal.webp" alt="Temperature map of the module with heatsink"></button><figcaption><b>Thermal:</b> GaN T<sub>j</sub> ≈ 77 °C, hot spots in the copper.</figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/buck-cispr.webp" alt="Common-mode ground current versus frequency against CISPR Class A and B limits"></button><figcaption><b>Common-mode EMI</b> vs. CISPR limits.</figcaption></figure>
+      </div>
+    </div>
+    <div class="more">
+      <div class="cols">
+        <div class="notes">
+          <div><h4>Roles</h4><p>I did the electrical characterization: gate drive, dead time, the bootstrapped high-side driver, 180° interleaving and the switch-node edges in the table.</p></div>
+          <div><h4>Team results</h4>
+            <ul>
+              <li>93.7% simulated efficiency at full load including layout parasitics.</li>
+              <li>GaN junctions around 77 °C in Ansys Icepak with 25 W total heat (Piyush Rana).</li>
+              <li>18-element Q3D parasitic model reduced to 7 elements for common-mode analysis (Theo Nguyen); shield layer by Pranav Balaji.</li>
+              <li>The CM estimate exceeded CISPR Class A from 200 kHz to 5 MHz; a CM choke and larger shield were the next steps.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="ds-wrap">
+          <table class="ds">
+            <thead><tr><th>My measurements</th><th>Simulated</th></tr></thead>
+            <tbody>
+              <tr><td>Switch-node rise (10–90%)</td><td class="v r">3.26 ns</td></tr>
+              <tr><td>Rise dv/dt</td><td class="v r">≈ 14.7 V/ns</td></tr>
+              <tr><td>Switch-node fall (90–10%)</td><td class="v r">5.65 ns</td></tr>
+              <tr><td>Fall dv/dt</td><td class="v r">≈ 8.5 V/ns</td></tr>
+              <tr><td>Phase shift between legs</td><td class="v r">180°</td></tr>
+              <tr><td>Gate drive swing</td><td class="v r">0 to 5 V</td></tr>
+            </tbody>
+            <caption>48 V input · LTspice with vendor gate-driver model, isolators modelled with transformer isolation</caption>
+          </table>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- SIMO -->
+  <article class="proj" data-d="power" id="simo">
+    <header>
+      <div class="eyebrow"><span class="dom">Power</span><span>ECE 534 · Power Electronics</span><span>Fall 2025</span><span>Individual</span></div>
+      <h3>550 W single-input, three-output flyback converter</h3>
+      <p class="sum">65–85 V in to 25 V/150 W, 50 V/100 W and 150 V/300 W isolated outputs at 50 kHz, with a closed voltage loop in PLECS.</p>
+    </header>
+    <div class="stats">
+      <div><b>550 W</b><span>three isolated outputs</span></div>
+      <div><b>≈ 93.8%</b><span>est. full-load efficiency</span></div>
+      <div><b>17.9 → 14.1 W</b><span>device loss after redesign</span></div>
+      <div><b>0.24%</b><span>overshoot, 25 V output</span></div>
+    </div>
+    <div class="gal">
+      <div class="gl">Circuit</div>
+      <div class="figs lead two">
+        <figure><button class="zoom" type="button"><img src="img/simo-topology.svg" alt="Flyback with one primary and three secondary windings, each with a diode, output capacitor and load"></button><figcaption><b>Power stage.</b> One primary, three isolated secondaries.</figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/simo-loop-gain.webp" alt="Loop gain magnitude and phase Bode plot"></button><figcaption><b>Loop gain</b> of the compensated 25 V loop.</figcaption></figure>
+      </div>
+      <div class="gl">Results</div>
+      <div class="figs">
+        <figure><button class="zoom" type="button"><img src="img/simo-efficiency.webp" alt="Efficiency versus load for input voltages 65 to 85 V"></button><figcaption><b>Efficiency</b> vs. load, 65–85 V.</figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/simo-losses.webp" alt="Pie chart of loss distribution, total 36.1 W"></button><figcaption><b>Loss budget,</b> 36.1 W total.</figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/simo-ripple.webp" alt="25 V output voltage ripple in steady state"></button><figcaption><b>25 V output ripple.</b></figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/simo-step.webp" alt="Closed-loop start-up of the 25 V output"></button><figcaption><b>Closed-loop start-up.</b></figcaption></figure>
+      </div>
+    </div>
+    <div class="more">
+      <div class="cols">
+        <div class="notes">
+          <div><h4>Design decisions</h4>
+            <ul>
+              <li>Turns ratios set at 65 V with D<sub>max</sub> = 0.45 (reflected voltage ≈ 53 V); duty falls to 0.385 at 85 V.</li>
+              <li>L<sub>m</sub> ≈ 160 µH keeps the converter in CCM at full load.</li>
+              <li>Swapped the 55 mΩ FDPF24N25 for an 18 mΩ STP25N018M9 and moved to Schottky/ultrafast rectifiers.</li>
+              <li>The loop regulates the 25 V output; the 50 V and 150 V outputs are cross-regulated, and the response is overdamped (~65 ms rise). Next: higher crossover and weighted multi-output feedback.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="ds-wrap">
+          <table class="ds">
+            <thead><tr><th>Parameter</th><th>Target</th><th>Result</th></tr></thead>
+            <tbody>
+              <tr><td>Efficiency (full load)</td><td class="v t">≥ 92%</td><td class="v r">≈ 93.8% est.</td></tr>
+              <tr><td>25 V output (regulated)</td><td class="v t">25 V</td><td class="v r">25.00 V avg</td></tr>
+              <tr><td>50 V output</td><td class="v t">50 V</td><td class="v r">46.2 V avg</td></tr>
+              <tr><td>150 V output</td><td class="v t">150 V</td><td class="v r">144.7 V avg</td></tr>
+              <tr><td>Overshoot</td><td class="v t">&lt; 20%</td><td class="v r">0.22–0.35%</td></tr>
+              <tr><td>Switching frequency</td><td class="v t">≥ 50 kHz</td><td class="v r">50 kHz</td></tr>
+            </tbody>
+            <caption>PLECS · efficiency = 14.1 W device/capacitor loss + assumed 4% (22 W) transformer loss at 550 W</caption>
+          </table>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- SRAM -->
+  <article class="proj" data-d="digital" id="sram">
+    <header>
+      <div class="eyebrow"><span class="dom">Digital / layout</span><span>ECE 546 · VLSI Design</span><span>Spring 2026</span><span>3-person team</span></div>
+      <h3>32-bit dual-port 8T SRAM, schematic to layout</h3>
+      <p class="sum">8 × 4 array of 8T cells with separate read and write ports at 0.8 V, decoders, column muxes, precharge and output flip-flops.</p>
+    </header>
+    <div class="stats">
+      <div><b>175 ps</b><span>minimum clock period</span></div>
+      <div><b>2.539 pJ</b><span>total energy, test vectors</span></div>
+      <div><b>26.84 µm²</b><span>layout area</span></div>
+      <div><b>706</b><span>transistors</span></div>
+    </div>
+    <div class="gal">
+      <div class="gl">Architecture and layout</div>
+      <div class="figs">
+        <figure><button class="zoom" type="button"><img src="img/sram-arch.svg" alt="SRAM block diagram: precharge, 8 by 4 8T array, write and read row decoders, column muxes and output flip-flops"></button><figcaption><b>Architecture.</b> Separate read and write decoders.</figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/sram-decoder-layout.webp" alt="Row decoder layout"></button><figcaption><b>Row decoder layout.</b></figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/sram-layout.webp" alt="Full SRAM layout with bitcell array, decoders and I/O"></button><figcaption><b>Full layout,</b> LVS/DRC clean.</figcaption></figure>
+      </div>
+    </div>
+    <div class="more">
+      <div class="notes">
+        <p><b>Roles:</b> I designed the 3-to-8 read and write row decoders (schematic and layout) and shared LVS/DRC debugging and top-level integration with HongChan Lee and Ted Hsiao.</p>
+        <p>Write-wordline splitting logic stops unselected columns from writing floating bit-line values, and two inverters of delay on one gate input removed a glitch between the wordline and address edges.</p>
+      </div>
+    </div>
+  </article>
+
+  </div>
+
+</section>
+
+<!-- ===================== IN PROGRESS ===================== -->
+<section id="in-progress">
+  <div class="sh"><h2>In progress</h2><span class="n">Fall 2026</span></div>
+  <p class="lede">Current designs. Results will be added as each one is finished.</p>
+  <div class="wip">
+    <article>
+      <span class="eyebrow"><span class="dom">Mixed-signal</span><span>ECE 714</span></span>
+      <h3>12-bit SAR ADC</h3>
+      <p>Charge-redistribution SAR ADC with no op-amp: split-array capacitive DAC, latched comparator, bootstrapped track-and-hold with charge-injection cancellation, and Verilog-A SAR logic. Sized from a noise and timing budget (kT/C, T&amp;H settling, comparator metastability and Monte Carlo offset).</p>
+      <div class="specs"><span>11 ENOB target</span><span>&gt; 30 MS/s</span><span>90 nm GPDK</span><span>1.2 V</span><span>300 mV FS</span></div>
+      <span class="st">Design reviews under way</span>
+    </article>
+    <article>
+      <span class="eyebrow"><span class="dom">Power IC</span><span>ECE 734</span></span>
+      <h3>Energy-harvesting boost converter</h3>
+      <p>Full-chip boost converter with inductor peak-current control for a thermoelectric generator, run as six weekly design reviews in Cadence.</p>
+      <div class="specs"><span>peak-current control</span><span>TEG input</span></div>
+      <span class="st">Weekly design reviews</span>
+    </article>
+    <article>
+      <span class="eyebrow"><span class="dom">Analog · PMU</span><span>Cadence Virtuoso</span></span>
+      <h3>Low-dropout regulator</h3>
+      <p>PMOS pass device driven by a single-stage OTA error amplifier, designed for dropout, PSRR and quiescent current.</p>
+      <div class="specs"><span>PMOS pass</span><span>single-stage OTA</span></div>
+      <span class="st">Design complete, write-up next</span>
+    </article>
+    <article>
+      <span class="eyebrow"><span class="dom">Devices</span><span>ECE 502 · TCAD</span></span>
+      <h3>Wide-bandgap power device</h3>
+      <p>Hand design of the drift region, then TCAD simulation of a WBG/UWBG power device to a target breakdown voltage.</p>
+      <div class="specs"><span>drift-region design</span><span>TCAD</span></div>
+      <span class="st">Due November 2026</span>
+    </article>
+  </div>
+</section>
+
+<!-- ===================== INDUSTRY ===================== -->
+<section id="industry">
+  <div class="sh"><h2>Industry work</h2><span class="n">2022 – Jul 2025</span></div>
+  <div class="job">
+    <div class="eyebrow"><span class="dom">Elansol Technologies · Pune, India</span><span>Intern 2022–2023</span><span>Application Engineer Jul 2023 – Jul 2025</span></div>
+    <h3>Sensing hardware and plant monitoring, from board to commissioning</h3>
+    <p class="lede" style="margin:0">Elansol builds custom industrial IoT, SCADA and condition-monitoring systems. My work ran from electronics design through installation, commissioning and troubleshooting at customer plants. Customer names are withheld.</p>
+  </div>
+
+  <div class="xp">
+    <div class="xp-item">
+      <h4>Contactless laser vibration monitoring on motors</h4>
+      <p>A condition-monitoring system using laser-reflection vibration sensors on more than 100 motors at an automotive plant. I designed the power and signal-conditioning board for the sensor nodes and supported the rollout on site. Each sensor streams target velocity and distance at 6 or 12 kHz in 600-sample packets, which the ESP32 firmware publishes as JSON over MQTT or passes over serial to a bridge that writes RMS values into Modbus TCP registers for the plant PLC.</p>
+      <div class="flow" aria-label="Signal chain">
+        <div class="st"><b>Motor / bearing</b><span>vibration source</span></div><span class="ar">→</span>
+        <div class="st"><b>Laser sensor</b><span>velocity + distance</span></div><span class="ar">→</span>
+        <div class="st me"><b>Power &amp; conditioning board</b><span>my design</span></div><span class="ar">→</span>
+        <div class="st"><b>ESP32 node</b><span>12 kHz · MQTT JSON</span></div><span class="ar">→</span>
+        <div class="st"><b>PLC / SCADA</b><span>Modbus TCP · dashboards</span></div>
+      </div>
+      <div class="formula">
+        <p>Bearing defect frequencies used to read the vibration spectra. <i>f<sub>r</sub></i> is shaft speed, <i>N</i> the number of rolling elements, <i>d</i> the ball diameter, <i>D</i> the pitch diameter and <i>φ</i> the contact angle.</p>
+        <dl>
+          <dt>FTF (cage)</dt><dd>(f<sub>r</sub>/2) · (1 − (d/D)·cos φ)</dd>
+          <dt>BPFO</dt><dd>(N·f<sub>r</sub>/2) · (1 − (d/D)·cos φ)</dd>
+          <dt>BPFI</dt><dd>(N·f<sub>r</sub>/2) · (1 + (d/D)·cos φ)</dd>
+          <dt>BSF</dt><dd>(D/2d) · f<sub>r</sub> · (1 − ((d/D)·cos φ)²)</dd>
+        </dl>
+        <p>A rise at one of these lines, or at its harmonics and sidebands, points to the outer race, inner race, rolling elements or cage.</p>
+      </div>
+    </div>
+
+    <div class="xp-item">
+      <h4>SCADA and machine connectivity</h4>
+      <p>Connected production equipment to monitoring systems so machine and process data reached operators instead of staying at the machine. On a blanking-press line I integrated a Mitsubishi PLC with Node-RED flows and ThingsBoard dashboards. At a rubber manufacturing plant I worked on an Ignition SCADA system that centralized plant data. Both involved PLC communication, data acquisition, dashboard building, and debugging the links between industrial hardware and software on site.</p>
+      <div class="tags"><span class="hl">Ignition 8.1 Certified</span><span>Mitsubishi PLC</span><span>Node-RED</span><span>ThingsBoard</span><span>Ignition SCADA</span><span>Modbus RTU/TCP</span><span>MQTT</span><span>RS-485</span></div>
+    </div>
+
+    <div class="xp-item">
+      <h4>Multi-protocol IoT gateway board</h4>
+      <p>Designed during my internship: a KiCad gateway board that collects data from machines over RS-485 and RS-232 and forwards it to the cloud over Ethernet or 2G cellular for remote monitoring, running from a 7–36 V industrial supply.</p>
+    </div>
+
+    <div class="xp-item">
+      <h4>Documentation and integration process</h4>
+      <p>Wrote step-by-step installation, commissioning and troubleshooting guides covering wiring, sensor connections, communication setup and software configuration, so technicians could work without constant support and new engineers onboarded faster. I also wrote architecture documentation for the software and AI teams, and set up an integration procedure built on the Model Context Protocol (MCP) to cut repeated development work on recurring hardware-software integration problems.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SKILLS + EDUCATION ===================== -->
+<section id="skills">
+  <div class="sh"><h2>Skills &amp; education</h2></div>
+  <div class="two">
+    <div class="panel kv">
+      <div><h4>IC design &amp; simulation</h4><p>Cadence Virtuoso, Spectre / SpectreRF (PSS, pnoise, HB), HSPICE, LTspice, ASITIC, Keysight ADS; layout with LVS/DRC</p></div>
+      <div><h4>Power &amp; packaging</h4><p>PLECS, averaged-switch modelling and loop compensation, Ansys Q3D parasitic extraction, Ansys Icepak (team use)</p></div>
+      <div><h4>Boards &amp; lab</h4><p>KiCad, Altium; oscilloscopes, network analyzer, board bring-up and debug</p></div>
+      <div><h4>Code &amp; automation</h4><p>Python, MATLAB, C/C++ (embedded), Verilog-A, PLC programming, Node-RED, Ignition SCADA, Modbus, MQTT</p></div>
+    </div>
+    <div class="panel edu">
+      <div><h4>North Carolina State University</h4><span class="m">MS Electrical Engineering · Aug 2025 – May 2027 · GPA 3.5</span>
+        <p>Analog Electronics (ECE 511), ICs for Wireless (ECE 712), Power Electronics (ECE 534), RF Design for Wireless (ECE 549), Power Electronics Design &amp; Packaging (ECE 533), VLSI Design (ECE 546). Current: ECE 714 (mixed-signal), ECE 734, ECE 553 (power semiconductor devices), ECE 502 (WBG device design &amp; TCAD).</p></div>
+      <div><h4>MIT World Peace University, Pune</h4><span class="m">B.Tech Electronics &amp; Communication · 2019 – 2023 · GPA 3.7</span>
+        <p>CMOS Digital VLSI Design, Mixed-Signal CMOS Design.</p></div>
+      <div class="cert"><span class="seal">8.1</span><div><b>Ignition 8.1 Certified</b><span>Inductive Automation · March 2024</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="contact-card">
+    <h2>Let's talk</h2>
+    <p>Looking for full-time roles from 2027 and co-ops in analog/mixed-signal, RF and power IC design, and applications engineering.</p>
+    <div class="row">
+      <button class="btn primary" type="button" data-copy="sarthaknisal007@gmail.com">Copy email</button>
+      <a class="btn" href="https://www.linkedin.com/in/sarthak-nisal" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <span class="mail">sarthaknisal007@gmail.com</span>
+    </div>
+  </div>
+  <footer>
+    <span>Course-project figures are simulation results unless a caption says otherwise.</span>
+    <span>Updated September 2026</span>
+  </footer>
+</section>
+
+</main>
+</div>
+
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Enlarged figure">
+  <div class="lb-in">
+    <img id="lb-img" alt="">
+    <p id="lb-cap"></p>
+    <button type="button" id="lb-close">Close</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var chips=document.querySelectorAll('.chip');
+  var items=document.querySelectorAll('.proj,.tile');
+  chips.forEach(function(c){
+    c.addEventListener('click',function(){
+      var f=c.getAttribute('data-f');
+      chips.forEach(function(x){x.setAttribute('aria-pressed',x===c?'true':'false');});
+      items.forEach(function(p){p.hidden=!(f==='all'||p.getAttribute('data-d')===f);});
+    });
+  });
+
+  document.querySelectorAll('[data-copy]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var t=b.getAttribute('data-copy'), label=b.textContent;
+      function done(msg){b.textContent=msg;setTimeout(function(){b.textContent=label;},1600);}
+      var mail=b.parentNode.querySelector('.mail');
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(t).then(function(){done('Copied');},function(){sel(mail);done('Selected');});
+      } else {sel(mail);done('Selected');}
+    });
+  });
+  function sel(el){if(!el)return;try{var r=document.createRange();r.selectNodeContents(el);var s=window.getSelection();s.removeAllRanges();s.addRange(r);}catch(e){}}
+
+  var lb=document.getElementById('lb'), lbImg=document.getElementById('lb-img'), lbCap=document.getElementById('lb-cap'), closeBtn=document.getElementById('lb-close'), last=null;
+  document.querySelectorAll('.zoom').forEach(function(z){
+    z.setAttribute('aria-label','Enlarge figure');
+    z.addEventListener('click',function(){
+      var img=z.querySelector('img'), cap=z.parentNode.querySelector('figcaption');
+      lbImg.src=img.src; lbImg.alt=img.alt; lbCap.textContent=cap?cap.textContent:'';
+      last=z; lb.hidden=false; closeBtn.focus();
+    });
+  });
+  function close(){lb.hidden=true; lbImg.removeAttribute('src'); if(last)last.focus();}
+  closeBtn.addEventListener('click',close);
+  lb.addEventListener('click',function(e){if(e.target===lb)close();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!lb.hidden)close();});
+})();
+</script>
+
+</body>
+</html>
