@@ -341,9 +341,10 @@ footer{margin-top:40px;font-family:var(--mono);font-size:12.5px;color:var(--fain
     </div>
     <div class="gal">
       <div class="gl">Circuit</div>
-      <div class="figs lead two">
-        <figure><button class="zoom" type="button"><img src="img/vco-topology.svg" alt="LC VCO topology: cross-coupled NMOS pair, center-tapped inductors, varactor pair, switched-capacitor bank and tail current source"></button><figcaption><b>VCO core.</b> Cross-coupled pair, LC tank, varactors, cap bank.</figcaption></figure>
-        <figure><button class="zoom" type="button"><img src="img/vco-bank.svg" alt="Three binary-weighted switched-capacitor cells between the tank nodes"></button><figcaption><b>Capacitor bank.</b> Binary-weighted 1×/2×/4× cells.</figcaption></figure>
+      <div class="figs lead">
+        <figure><button class="zoom" type="button"><img src="img/vco-schematic.webp" alt="VCO schematic: cross-coupled NMOS pair, ASITIC inductor, varactor tank and bias blocks"></button><figcaption><b>VCO core.</b> Cross-coupled pair, ASITIC tank, varactors, bias.</figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/vco-cap-bank.webp" alt="Switched-capacitor tuning bank with binary-weighted MIM capacitors and switch bias blocks"></button><figcaption><b>Capacitor bank.</b> Binary-weighted 1×/2×/4× switched MIM caps.</figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/vco-inductor.webp" alt="ASITIC pi model of the spiral inductor"></button><figcaption><b>Inductor model.</b> ASITIC π-model, 515.6 pH.</figcaption></figure>
       </div>
       <div class="gl">Results</div>
       <div class="figs">
@@ -397,10 +398,10 @@ footer{margin-top:40px;font-family:var(--mono);font-size:12.5px;color:var(--fain
     </div>
     <div class="gal">
       <div class="gl">Circuit</div>
-      <div class="figs">
-        <figure><button class="zoom" type="button"><img src="img/rf-wilkinson.svg" alt="Wilkinson divider: two quarter-wave root-two Z0 lines with a 2 Z0 isolation resistor between outputs"></button><figcaption><b>Wilkinson.</b> √2·Z<sub>0</sub> λ/4 arms, 2·Z<sub>0</sub> isolation resistor.</figcaption></figure>
-        <figure><button class="zoom" type="button"><img src="img/rf-hybrid.svg" alt="Branch-line coupler: square of four quarter-wave lines, Z0 and Z0 over root two"></button><figcaption><b>Branch-line hybrid.</b> Z<sub>0</sub> and Z<sub>0</sub>/√2 arms.</figcaption></figure>
-        <figure><button class="zoom" type="button"><img src="img/rf-tjunction.svg" alt="T-junction divider with quarter-wave input line and two root-two Z0 arms"></button><figcaption><b>T-junction</b> baseline.</figcaption></figure>
+      <div class="figs lead">
+        <figure><button class="zoom" type="button"><img src="img/rf-wilkinson-sch.webp" alt="ADS schematic of the Wilkinson divider: two 70.7 ohm quarter-wave lines and a 100 ohm isolation resistor"></button><figcaption><b>Wilkinson divider.</b> 70.7 Ω λ/4 arms, 100 Ω isolation resistor.</figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/rf-hybrid-sch.webp" alt="ADS schematic of the branch-line coupler with 35.4 ohm and 50 ohm quarter-wave arms"></button><figcaption><b>Branch-line hybrid.</b> 35.4 Ω and 50 Ω arms.</figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/rf-tjunction-sch.webp" alt="ADS schematic of the T-junction divider with quarter-wave 70.7 ohm arms"></button><figcaption><b>T-junction</b> baseline.</figcaption></figure>
       </div>
       <div class="gl">Results</div>
       <div class="figs">
@@ -454,8 +455,9 @@ footer{margin-top:40px;font-family:var(--mono);font-size:12.5px;color:var(--fain
     </div>
     <div class="gal">
       <div class="gl">Circuit</div>
-      <div class="figs single">
-        <figure><button class="zoom" type="button"><img src="img/ota-topology.svg" alt="Folded-cascode op-amp with PMOS input pair, cascode branches, common-source second stage and RZ-CC compensation"></button><figcaption><b>Amplifier core.</b> Folded cascode + CS second stage with R<sub>Z</sub>–C<sub>C</sub> compensation (CMFB and bias not shown).</figcaption></figure>
+      <div class="figs lead two">
+        <figure><button class="zoom" type="button"><img src="img/ota-core.webp" alt="Folded-cascode first stage with PMOS input pair, common-source second stage and lead compensation"></button><figcaption><b>Amplifier core.</b> Folded cascode + CS second stage.</figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/ota-bias.webp" alt="Bias circuit: bootstrapped current source with Rset and wide-swing mirrors"></button><figcaption><b>Bias network.</b> 37.5 µA self-biased reference.</figcaption></figure>
       </div>
       <div class="gl">Results</div>
       <div class="figs">
@@ -514,7 +516,7 @@ footer{margin-top:40px;font-family:var(--mono);font-size:12.5px;color:var(--fain
     <div class="gal">
       <div class="gl">Circuit and module</div>
       <div class="figs lead two">
-        <figure><button class="zoom" type="button"><img src="img/buck-topology.svg" alt="Two-phase interleaved synchronous buck with four GaN FETs, isolated high-side drivers and coupled inductor"></button><figcaption><b>Power stage.</b> Two phases 180° apart, isolated high-side drive.</figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/buck-schematic.webp" alt="LTspice schematic of the two-phase GaN buck with gate drivers"></button><figcaption><b>Converter with gate drivers</b> (LTspice).</figcaption></figure>
         <figure><button class="zoom" type="button"><img src="img/buck-module.webp" alt="3D model of the power module showing copper busbars, GaN FETs, coupled inductor and capacitors"></button><figcaption><b>Module stack-up (team).</b></figcaption></figure>
       </div>
       <div class="gl">My results</div>
@@ -576,7 +578,7 @@ footer{margin-top:40px;font-family:var(--mono);font-size:12.5px;color:var(--fain
     <div class="gal">
       <div class="gl">Circuit</div>
       <div class="figs lead two">
-        <figure><button class="zoom" type="button"><img src="img/simo-topology.svg" alt="Flyback with one primary and three secondary windings, each with a diode, output capacitor and load"></button><figcaption><b>Power stage.</b> One primary, three isolated secondaries.</figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/simo-circuit.webp" alt="PLECS schematic of the three-output flyback with 160 microhenry magnetizing inductance"></button><figcaption><b>Power stage</b> (PLECS), L<sub>m</sub> = 160 µH.</figcaption></figure>
         <figure><button class="zoom" type="button"><img src="img/simo-loop-gain.webp" alt="Loop gain magnitude and phase Bode plot"></button><figcaption><b>Loop gain</b> of the compensated 25 V loop.</figcaption></figure>
       </div>
       <div class="gl">Results</div>
@@ -631,10 +633,11 @@ footer{margin-top:40px;font-family:var(--mono);font-size:12.5px;color:var(--fain
       <div><b>706</b><span>transistors</span></div>
     </div>
     <div class="gal">
-      <div class="gl">Architecture and layout</div>
+      <div class="gl">Circuit and layout</div>
       <div class="figs">
-        <figure><button class="zoom" type="button"><img src="img/sram-arch.svg" alt="SRAM block diagram: precharge, 8 by 4 8T array, write and read row decoders, column muxes and output flip-flops"></button><figcaption><b>Architecture.</b> Separate read and write decoders.</figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/sram-decoder.webp" alt="3-to-8 row decoder schematic with wordline drivers"></button><figcaption><b>Row decoder.</b></figcaption></figure>
         <figure><button class="zoom" type="button"><img src="img/sram-decoder-layout.webp" alt="Row decoder layout"></button><figcaption><b>Row decoder layout.</b></figcaption></figure>
+        <figure><button class="zoom" type="button"><img src="img/sram-bitcell.webp" alt="8T dual-port bitcell schematic"></button><figcaption><b>8T bitcell.</b></figcaption></figure>
         <figure><button class="zoom" type="button"><img src="img/sram-layout.webp" alt="Full SRAM layout with bitcell array, decoders and I/O"></button><figcaption><b>Full layout,</b> LVS/DRC clean.</figcaption></figure>
       </div>
     </div>
