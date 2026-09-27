@@ -722,6 +722,13 @@ footer{margin-top:40px;font-family:var(--mono);font-size:12.5px;color:var(--fain
 
   <div class="xp">
     <div class="xp-item">
+      <h4>System integration and on-site debugging</h4>
+      <p>Most of my work was getting sensors, PLCs, gateways and cloud dashboards from different vendors to work as one system at customer plants. Each deployment meant learning a new tool or protocol quickly, building the fixtures the site needed, and debugging until the data was reliable end to end.</p>
+      <div class="story"><div><h4>Problem</h4><p>Multi-vendor systems failed at their integration points: sensor noise from grounding, RS-485/Modbus dropouts, PLC register and scaling mismatches, and data not reaching MQTT, Node-RED or ThingsBoard dashboards.</p></div><div><h4>What I did</h4><p>Debugged each link in turn, from the sensor and its grounding through the fieldbus and PLC register map to the cloud dashboard. I built test and bring-up jigs, sensor mounting fixtures and control-panel additions where the site needed them.</p></div><div><h4>Result</h4><p>Fixes went into the standard setup and into my step-by-step installation and troubleshooting guides, so later deployments started from a known-good configuration.</p></div></div>
+      <div class="tags"><span>RS-485 / Modbus</span><span>PLC register mapping</span><span>grounding and noise</span><span>MQTT · Node-RED · ThingsBoard</span><span>test jigs</span><span>sensor fixtures</span><span>panel builds</span></div>
+    </div>
+
+    <div class="xp-item">
       <h4>Contactless laser vibration monitoring on motors</h4>
       <p>A condition-monitoring system using laser-reflection vibration sensors on more than 100 motors at an automotive plant. I designed the power and signal-conditioning board for the sensor nodes and supported the rollout on site. Each sensor streams target velocity and distance at 6 or 12 kHz in 600-sample packets, which the ESP32 firmware publishes as JSON over MQTT or passes over serial to a bridge that writes RMS values into Modbus TCP registers for the plant PLC.</p>
       <div class="flow" aria-label="Signal chain">
